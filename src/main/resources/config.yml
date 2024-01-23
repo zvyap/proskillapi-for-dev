@@ -94,7 +94,7 @@ Saving:
 Classes:
   #
   # Whether to use SkillAPI's health system
-  modify-health: true
+  modify-health: false
   #
   # The default health for players without a class
   classless-hp: 20
@@ -103,7 +103,7 @@ Classes:
   show-auto-skills: false
   #
   # Whether attributes are enabled
-  attributes-enabled: true
+  attributes-enabled: false
   #
   # Whether attributes can be refunded
   attributes-downgrade: false
@@ -120,7 +120,7 @@ Classes:
 Mana:
   #
   # Whether to use SkillAPI's mana system
-  enabled: true
+  enabled: false
   #
   # How frequently mana is gained in seconds
   freq: 1
@@ -222,7 +222,7 @@ GUI:
   #
   # Whether to lock the health bar to 10 hearts
   # This does not affect total health, only the display
-  old-health-bar: true
+  old-health-bar: false
   #
   # Should the health bar be downscaled to real health if the max is under 20?
   downscale-under: false
@@ -233,7 +233,7 @@ GUI:
   #
   # This is what to display using the level bar, if anything.
   # Options are: none, mana, level
-  level-bar: level
+  level-bar: none
   #
   # This is what to display using the food bar, if anything.
   # Options are: none, mana, exp
@@ -312,7 +312,7 @@ PVP:
 Casting:
   #
   # Whether the main casting option is enabled
-  enabled: true
+  enabled: false
 
   # What casting mode to use. Available options are:
   # ITEM:
@@ -511,7 +511,7 @@ Experience:
   # Note: any dropped exp will not count towards class exp,
   # only enabled sources will count. By default, this is only
   # mob deaths.
-  use-exp-orbs: true
+  use-exp-orbs: false
   #
   # Whether to prevent gaining experience from mobs
   # spawned via a mob spawner block

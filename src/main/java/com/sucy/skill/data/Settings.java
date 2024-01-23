@@ -98,6 +98,7 @@ public class Settings {
             SAVE_BASE              = "Saving.",
             SAVE_AUTO              = SAVE_BASE + "auto-save",
             SAVE_MINS              = SAVE_BASE + "minutes",
+            SAVE_VOLATILE          = SAVE_BASE + "volatile-storage",
             SAVE_SQL               = SAVE_BASE + "sql-database",
             SAVE_SQLD              = SAVE_BASE + "sql-details",
             CLASS_BASE             = "Classes.",
@@ -222,6 +223,7 @@ public class Settings {
     private CombatProtection    combatProtection = new DefaultCombatProtection();
     private boolean             auto;
     private boolean             useSql;
+    private boolean             volatileStorage;
     private int                 minutes;
     private int                 sqlDelay;
     /**
@@ -944,6 +946,11 @@ public class Settings {
         return minutes * 60 * 20;
     }
 
+
+    public boolean isVolatileStorage() {
+        return volatileStorage;
+    }
+
     /**
      * Checks whether the plugin is using SQL Database saving
      *
@@ -982,6 +989,7 @@ public class Settings {
         auto = config.getBoolean(SAVE_AUTO);
         minutes = config.getInt(SAVE_MINS);
         useSql = config.getBoolean(SAVE_SQL);
+        volatileStorage = config.getBoolean(SAVE_VOLATILE);
 
         DataSection details = config.getSection(SAVE_SQLD);
         sqlDelay = details.getInt("delay");

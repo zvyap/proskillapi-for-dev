@@ -66,7 +66,7 @@ public class PlayerAccounts {
     public PlayerAccounts(OfflinePlayer player) {
         this.player = player.getUniqueId();
 
-        PlayerData data = new PlayerData(player, true);
+        PlayerData data = new PlayerDataImpl(player, true);
         classData.put(1, data);
         active = 1;
     }
@@ -160,7 +160,7 @@ public class PlayerAccounts {
      */
     public PlayerData getData(int id, OfflinePlayer player, boolean init) {
         if (!hasData(id) && id > 0 && player != null) {
-            classData.put(id, new PlayerData(player, init));
+            classData.put(id, new PlayerDataImpl(player, init));
         }
 
         return classData.get(id);
@@ -202,7 +202,7 @@ public class PlayerAccounts {
             return;
         }
         if (id <= getAccountLimit() && id > 0 && !classData.containsKey(id)) {
-            classData.put(id, new PlayerData(player, false));
+            classData.put(id, new PlayerDataImpl(player, false));
         }
         if (classData.containsKey(id)) {
             PlayerAccountChangeEvent event = new PlayerAccountChangeEvent(this, active, id);

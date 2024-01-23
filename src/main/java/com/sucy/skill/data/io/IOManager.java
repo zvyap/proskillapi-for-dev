@@ -28,6 +28,8 @@ package com.sucy.skill.data.io;
 
 import com.sucy.skill.SkillAPI;
 import com.sucy.skill.api.classes.RPGClass;
+import com.sucy.skill.api.event.PlayerAccountsLoadEvent;
+import com.sucy.skill.api.event.PlayerAccountsSaveEvent;
 import com.sucy.skill.api.player.*;
 import com.sucy.skill.api.skills.Skill;
 import com.sucy.skill.cast.CastMode;
@@ -35,11 +37,14 @@ import com.sucy.skill.listener.MainListener;
 import com.sucy.skill.log.Logger;
 import com.sucy.skill.manager.ComboManager;
 import mc.promcteam.engine.mccore.config.parse.DataSection;
+import mc.promcteam.engine.mccore.util.VersionManager;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -95,7 +100,21 @@ public abstract class IOManager {
      *
      * @return loaded player data
      */
-    public abstract HashMap<String, PlayerAccounts> loadAll();
+    public HashMap<String, PlayerAccounts> loadAll() {
+        List<OfflinePlayer> playerList = new LinkedList<>();
+        HashMap<String, PlayerAccounts> result = new HashMap<>();
+        for(Player player : VersionManager.getOnlinePlayers()) {
+            PlayerAccountsLoadEvent loadEvent = new PlayerAccountsLoadEvent(player);
+            if(loadEvent.getAccounts() != null) {
+                result.put(player.getUniqueId().toString().toLowerCase(), loadEvent.getAccounts());
+                continue;
+            }
+            playerList.add(player);
+        }
+
+        result.putAll(loadAllInternal(playerList));
+        return result;
+    }
 
     /**
      * Loads data for the player
@@ -103,24 +122,58 @@ public abstract class IOManager {
      * @param player player to load for
      * @return loaded player data
      */
-    public abstract PlayerAccounts loadData(OfflinePlayer player);
+    public PlayerAccounts loadData(OfflinePlayer player) {
+        PlayerAccountsLoadEvent loadEvent = new PlayerAccountsLoadEvent(player);
+        if(loadEvent.getAccounts() != null) {
+            return loadEvent.getAccounts();
+        }
+
+        return loadDataInternal(loadEvent.getOfflinePlayer());
+    }
 
     /**
      * Saves the player's data
      *
      * @param data data to save
      */
-    public abstract void saveData(PlayerAccounts data);
+    public void saveData(PlayerAccounts data) {
+        PlayerAccountsSaveEvent saveEvent = new PlayerAccountsSaveEvent(data);
+        if(!saveEvent.isCancelled()) {
+            saveDataInternal(saveEvent.getAccountData());
+        }
+    }
 
-    /**
-     * Saves all player data
-     */
-    public void saveAll() {
-        for (PlayerAccounts data : SkillAPI.getPlayerAccountData().values()) {
+    protected abstract PlayerAccounts loadDataInternal(OfflinePlayer player);
+    protected abstract void saveDataInternal(PlayerAccounts data);
+
+    protected void saveAllInternal(Map<String, PlayerAccounts> accountsMap) {
+        for (PlayerAccounts data : accountsMap.values()) {
             if (data.isLoaded() && !MainListener.loadingPlayers.containsKey(data.getOfflinePlayer().getUniqueId())) {
-                saveData(data);
+                saveDataInternal(data);
             }
         }
+    }
+
+    protected Map<String, PlayerAccounts> loadAllInternal(List<OfflinePlayer> players) {
+        Map<String, PlayerAccounts> accountsMap = new HashMap<>();
+        for(OfflinePlayer player : players) {
+            accountsMap.put(player.getUniqueId().toString().toLowerCase(), loadDataInternal(player));
+        }
+        return accountsMap;
+    }
+
+    /**
+     * Saves all player data provided, only call when you know what you are doing
+     */
+    public void saveAll() {
+        Map<String, PlayerAccounts> accountsMap = new HashMap<>();
+        for (Map.Entry<String, PlayerAccounts> entry : SkillAPI.getPlayerAccountData().entrySet()) {
+            PlayerAccountsSaveEvent saveEvent = new PlayerAccountsSaveEvent(entry.getValue());
+            if(!saveEvent.isCancelled()) {
+                accountsMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        saveAllInternal(accountsMap);
     }
 
     /**

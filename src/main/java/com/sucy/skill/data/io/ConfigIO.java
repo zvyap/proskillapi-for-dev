@@ -31,12 +31,12 @@ import com.sucy.skill.api.player.PlayerAccounts;
 import com.sucy.skill.log.Logger;
 import mc.promcteam.engine.mccore.config.CommentedConfig;
 import mc.promcteam.engine.mccore.config.parse.DataSection;
-import mc.promcteam.engine.mccore.util.VersionManager;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * IO manager that saves/loads to a .yml configuration file
@@ -51,14 +51,6 @@ public class ConfigIO extends IOManager {
         super(plugin);
     }
 
-    public HashMap<String, PlayerAccounts> loadAll() {
-        HashMap<String, PlayerAccounts> result = new HashMap<String, PlayerAccounts>();
-        for (Player player : VersionManager.getOnlinePlayers()) {
-            result.put(player.getUniqueId().toString().toLowerCase(), loadData(player));
-        }
-        return result;
-    }
-
     /**
      * Loads data for the given player
      *
@@ -66,7 +58,7 @@ public class ConfigIO extends IOManager {
      * @return loaded player data
      */
     @Override
-    public PlayerAccounts loadData(OfflinePlayer player) {
+    public PlayerAccounts loadDataInternal(OfflinePlayer player) {
         String          playerKey  = player.getUniqueId().toString().toLowerCase();
         CommentedConfig config     = new CommentedConfig(api, "players/" + playerKey);
         CommentedConfig nameConfig = new CommentedConfig(api, "players/" + player.getName());
@@ -87,7 +79,7 @@ public class ConfigIO extends IOManager {
      * @param data data to save to the config
      */
     @Override
-    public void saveData(PlayerAccounts data) {
+    public void saveDataInternal(PlayerAccounts data) {
         if (!data.isLoaded()) return;
 
         try {
@@ -108,10 +100,9 @@ public class ConfigIO extends IOManager {
      * Saves all player data to the config
      */
     @Override
-    public void saveAll() {
-        HashMap<String, PlayerAccounts> data = SkillAPI.getPlayerAccountData();
-        ArrayList<String>               keys = new ArrayList<String>(data.keySet());
+    public void saveAllInternal(Map<String, PlayerAccounts> data) {
+        ArrayList<String> keys = new ArrayList<String>(data.keySet());
         for (String key : keys)
-            saveData(data.get(key));
+            saveDataInternal(data.get(key));
     }
 }

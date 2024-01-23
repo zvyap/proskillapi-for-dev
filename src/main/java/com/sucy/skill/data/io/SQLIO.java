@@ -35,12 +35,12 @@ import mc.promcteam.engine.mccore.config.parse.YAMLParser;
 import mc.promcteam.engine.mccore.sql.ColumnType;
 import mc.promcteam.engine.mccore.sql.direct.SQLDatabase;
 import mc.promcteam.engine.mccore.sql.direct.SQLTable;
-import mc.promcteam.engine.mccore.util.VersionManager;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Loads player data from the SQL Database
@@ -74,11 +74,11 @@ public class SQLIO extends IOManager {
     }
 
     @Override
-    public HashMap<String, PlayerAccounts> loadAll() {
+    public Map<String, PlayerAccounts> loadAllInternal(List<OfflinePlayer> playerList) {
         SQLConnection connection = openConnection();
 
         HashMap<String, PlayerAccounts> result = new HashMap<String, PlayerAccounts>();
-        for (Player player : VersionManager.getOnlinePlayers()) {
+        for (OfflinePlayer player : playerList) {
             result.put(player.getUniqueId().toString().toLowerCase(), load(connection, player));
         }
 
@@ -88,7 +88,7 @@ public class SQLIO extends IOManager {
     }
 
     @Override
-    public PlayerAccounts loadData(OfflinePlayer player) {
+    public PlayerAccounts loadDataInternal(OfflinePlayer player) {
         if (player == null) return null;
 
         SQLConnection connection = openConnection();
@@ -101,7 +101,7 @@ public class SQLIO extends IOManager {
     }
 
     @Override
-    public void saveData(PlayerAccounts data) {
+    public void saveDataInternal(PlayerAccounts data) {
         if (!data.isLoaded()) return;
 
         SQLConnection connection = openConnection();
@@ -110,9 +110,8 @@ public class SQLIO extends IOManager {
     }
 
     @Override
-    public void saveAll() {
+    public void saveAllInternal(Map<String, PlayerAccounts> data) {
         SQLConnection                   connection = openConnection();
-        HashMap<String, PlayerAccounts> data       = SkillAPI.getPlayerAccountData();
         ArrayList<String>               keys       = new ArrayList<String>(data.keySet());
         for (String key : keys) {
             saveSingle(connection, data.get(key));
