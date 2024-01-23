@@ -2,7 +2,16 @@
 [![Build](https://github.com/promcteam/proskillapi/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/promcteam/promccore/packages/1203744)
 [![Build](https://github.com/promcteam/proskillapi/actions/workflows/devbuild.yml/badge.svg?branch=dev)](https://github.com/promcteam/promccore/packages/1203744)
 
-# ProSkillAPI
+# ProSkillAPI-For-Dev
+## Modification
+```
+[+] Added config 'Saving.volatile-storage' which disabled saving function for the function.
+[+] Added PlayerAccountsLoadEvent and PlayerAccountsSaveEvent which allow user to make modification to the plugin saving feature (work even volatile-storage is true)
+[/] Change PlayerData to interface, original PlayerData became PlayerDataImpl
+```
+
+---
+# Original readme.md
 
 Our fork is based on the original skillapi and the forked skillapi by Sentropic.
 
@@ -34,7 +43,7 @@ or snapshots through Sonatype.
     <id>sonatype</id>
     <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
 </repository>
-...
+
 <dependency>
     <groupId>com.promcteam</groupId>
     <artifactId>proskillapi</artifactId>
