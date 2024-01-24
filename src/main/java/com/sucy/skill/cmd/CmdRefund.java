@@ -85,12 +85,12 @@ public class CmdRefund implements IFunction {
                         return;
                     }
 
-                    playerData.attributes.put(args[2].toLowerCase(), current - Integer.parseInt(args[3]));
+                    playerData.getAttributeData().put(args[2].toLowerCase(), current - Integer.parseInt(args[3]));
                     if (current - Integer.parseInt(args[3]) <= 0) {
-                        playerData.attribPoints += current;
-                        playerData.attributes.remove(args[2].toLowerCase());
+                        playerData.setAttribPoints(playerData.getAttributePoints() + current);
+                        playerData.getAttributeData().remove(args[2].toLowerCase());
                     } else {
-                        playerData.attribPoints += Integer.parseInt(args[3]);
+                        playerData.setAttribPoints(playerData.getAttributePoints() + Integer.parseInt(args[3]));
                     }
                     playerData.updatePlayerStat(playerData.getPlayer());
                     cmd.sendMessage(sender,

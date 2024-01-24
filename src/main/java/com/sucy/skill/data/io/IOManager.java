@@ -38,6 +38,7 @@ import com.sucy.skill.log.Logger;
 import com.sucy.skill.manager.ComboManager;
 import mc.promcteam.engine.mccore.config.parse.DataSection;
 import mc.promcteam.engine.mccore.util.VersionManager;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -105,6 +106,7 @@ public abstract class IOManager {
         HashMap<String, PlayerAccounts> result = new HashMap<>();
         for(Player player : VersionManager.getOnlinePlayers()) {
             PlayerAccountsLoadEvent loadEvent = new PlayerAccountsLoadEvent(player);
+            Bukkit.getPluginManager().callEvent(loadEvent);
             if(loadEvent.getAccounts() != null) {
                 result.put(player.getUniqueId().toString().toLowerCase(), loadEvent.getAccounts());
                 continue;
@@ -124,6 +126,7 @@ public abstract class IOManager {
      */
     public PlayerAccounts loadData(OfflinePlayer player) {
         PlayerAccountsLoadEvent loadEvent = new PlayerAccountsLoadEvent(player);
+        Bukkit.getPluginManager().callEvent(loadEvent);
         if(loadEvent.getAccounts() != null) {
             return loadEvent.getAccounts();
         }
@@ -138,6 +141,7 @@ public abstract class IOManager {
      */
     public void saveData(PlayerAccounts data) {
         PlayerAccountsSaveEvent saveEvent = new PlayerAccountsSaveEvent(data);
+        Bukkit.getPluginManager().callEvent(saveEvent);
         if(!saveEvent.isCancelled()) {
             saveDataInternal(saveEvent.getAccountData());
         }
@@ -169,6 +173,7 @@ public abstract class IOManager {
         Map<String, PlayerAccounts> accountsMap = new HashMap<>();
         for (Map.Entry<String, PlayerAccounts> entry : SkillAPI.getPlayerAccountData().entrySet()) {
             PlayerAccountsSaveEvent saveEvent = new PlayerAccountsSaveEvent(entry.getValue());
+            Bukkit.getPluginManager().callEvent(saveEvent);
             if(!saveEvent.isCancelled()) {
                 accountsMap.put(entry.getKey(), entry.getValue());
             }
