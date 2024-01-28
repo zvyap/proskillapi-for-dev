@@ -16,6 +16,7 @@ public class PlayerAccountsSaveEvent extends Event implements Cancellable {
      * @param accounts player accounts data
      */
     public PlayerAccountsSaveEvent(PlayerAccounts accounts) {
+        super(true);
         this.accounts = accounts;
     }
 

@@ -21,6 +21,7 @@ public class PlayerAccountsLoadEvent extends Event {
      * @param player to retrieve accounts data
      */
     public PlayerAccountsLoadEvent(@NotNull OfflinePlayer player) {
+        super(true);
         this.player = player;
     }
 
